@@ -22,7 +22,7 @@ Xây dựng và tối ưu mô hình phân loại nhị phân nhằm nhận diệ
 AIO2026-Banana/
 ├── Baseline_model_and_optimize.ipynb   # Notebook chính: EDA + Preprocessing + Baseline + Optimize
 ├── notebooks/
-│   └── AIE_data.ipynb                  # Notebook phân tích dữ liệu bổ sung
+│   └── AIE_data.ipynb                  
 ├── README.md
 └── .gitignore
 ```
