@@ -22,7 +22,7 @@ Xây dựng mô hình phân loại nhị phân nhằm nhận diện bình luận
 AIO2026-Banana/
 ├── AIO_BANANA_WARMUP_1.ipynb   # Notebook chính: EDA + Preprocessing + Modeling
 ├── notebooks/
-│   └── AIE_data.ipynb          # Notebook phân tích dữ liệu bổ sung
+│   └── AIE_data.ipynb          
 ├── README.md
 └── .gitignore
 ```
