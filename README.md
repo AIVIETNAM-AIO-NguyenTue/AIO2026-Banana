@@ -1,13 +1,13 @@
 # 🍌 AIO2026 Banana — Vietnamese Toxic Comment Classification
 
 > **Dự án phân loại bình luận độc hại tiếng Việt** trong khuôn khổ chương trình **AIO 2026**.  
-> Sử dụng pipeline xử lý ngôn ngữ tự nhiên truyền thống (TF-IDF + ML) để phân loại văn bản toxic / non-toxic.
+> Xây dựng baseline model và tối ưu hóa bằng pipeline TF-IDF + Machine Learning truyền thống.
 
 ---
 
 ## 📌 Mục tiêu
 
-Xây dựng mô hình phân loại nhị phân nhằm nhận diện bình luận **độc hại (toxic)** trong văn bản tiếng Việt:
+Xây dựng và tối ưu mô hình phân loại nhị phân nhằm nhận diện bình luận **độc hại (toxic)** trong văn bản tiếng Việt:
 
 | Nhãn | Ý nghĩa | Mã số |
 |------|---------|-------|
@@ -20,9 +20,9 @@ Xây dựng mô hình phân loại nhị phân nhằm nhận diện bình luận
 
 ```
 AIO2026-Banana/
-├── AIO_BANANA_WARMUP_1.ipynb   # Notebook chính: EDA + Preprocessing + Modeling
+├── Baseline_model_and_optimize.ipynb   # Notebook chính: EDA + Preprocessing + Baseline + Optimize
 ├── notebooks/
-│   └── AIE_data.ipynb          
+│   └── AIE_data.ipynb                  # Notebook phân tích dữ liệu bổ sung
 ├── README.md
 └── .gitignore
 ```
@@ -61,13 +61,13 @@ POS    92,078  (49.95%)
 
 ```python
 def preprocess_text(text):
-    text = html.unescape(text)           # Giải mã HTML entities
-    text = normalize_unicode(text)       # Chuẩn hóa Unicode NFC
-    text = text.lower()                  # Chuyển về chữ thường
-    text = normalize_repeated_chars(text)  # "nguuuu" → "ngu"
+    text = html.unescape(text)                       # Giải mã HTML entities
+    text = normalize_unicode(text)                   # Chuẩn hóa Unicode NFC
+    text = text.lower()                              # Chuyển về chữ thường
+    text = normalize_repeated_chars(text)            # "nguuuu" → "ngu"
     text = remove_punctuation_keep_underscore(text)  # Giữ "_" (word seg)
-    text = clean_whitespace(text)        # Xóa khoảng trắng thừa
-    text = normalize_repeated_words(text)  # "ngu ngu ngu" → "ngu"
+    text = clean_whitespace(text)                    # Xóa khoảng trắng thừa
+    text = normalize_repeated_words(text)            # "ngu ngu ngu" → "ngu"
     return text
 ```
 
@@ -99,10 +99,13 @@ Test   : 10%  (stratified)
 
 ## 🤖 Mô hình
 
-### Baseline
-- **Logistic Regression** với TF-IDF (unigram + bigram, max_features=10,000)
+### 📍 Baseline Model
+- **Logistic Regression** với TF-IDF (unigram + bigram, `max_features=10,000`)
+- Đánh giá nhanh trên tập validation làm điểm tham chiếu ban đầu
 
-### Tối ưu hóa (GridSearchCV)
+### 🔧 Optimize — GridSearchCV
+
+Tinh chỉnh hyperparameter cho 3 mô hình:
 
 | Mô hình | Tham số tìm kiếm |
 |---------|-----------------|
@@ -110,10 +113,11 @@ Test   : 10%  (stratified)
 | LinearSVC | `C` ∈ {0.001, 0.005, 0.1, 1, 10, 20} |
 | LightGBM | `n_estimators`, `learning_rate`, `max_depth` |
 
-### Ensemble (Voting Classifier)
+### 🏆 Ensemble (Voting Classifier)
 
-Kết hợp 4 mô hình để ra quyết định cuối:
-```
+Kết hợp 4 mô hình đã tối ưu để ra quyết định cuối:
+
+```python
 VotingClassifier(
     estimators=[
         ('lr',   best_lr),        # Logistic Regression (tuned)
@@ -138,8 +142,8 @@ pip install pandas scikit-learn lightgbm joblib
 ### Chạy notebook
 
 1. Upload `train-00000-of-00001.parquet` lên Google Colab
-2. Mở `AIO_BANANA_WARMUP_1.ipynb`
-3. Chạy toàn bộ cells theo thứ tự
+2. Mở `Baseline_model_and_optimize.ipynb`
+3. Chạy toàn bộ cells theo thứ tự từ trên xuống
 
 ### Dùng mô hình đã lưu
 
@@ -164,7 +168,7 @@ print("Toxic" if pred[0] == 1 else "Non-toxic")
 | Logistic Regression (baseline) | Validation set |
 | Ensemble (LR + SVC + LightGBM + NB) | Validation + Test set |
 
-> Kết quả chi tiết (Precision, Recall, F1) xem trong notebook `AIO_BANANA_WARMUP_1.ipynb`.
+> Chi tiết Precision, Recall, F1-score xem trong **`Baseline_model_and_optimize.ipynb`**.
 
 ---
 
