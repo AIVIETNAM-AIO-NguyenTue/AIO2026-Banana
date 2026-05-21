@@ -186,3 +186,18 @@ curl -X POST \
   -d "text=Đồ ngốc quá."
 ```
 
+## Gradio Demo
+
+Run interactive UI:
+
+```bash
+PYTHONPATH=src python src/toxic_guard/gradio_app.py
+```
+
+Open browser
+```
+http://127.0.0.1:7860
+```
+## Demo Screenshot
+
+![demo](assets/demo.png)
